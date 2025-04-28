@@ -24,6 +24,28 @@ export default function ProductList() {
     });
   }
 
+  function updateProductQuantity(product, newQuantity) {
+    if (newQuantity < 1) return;
+    setAddedProducts((prevAddedProducts) => {
+      return prevAddedProducts.map((p) =>
+        p.name === product.name ? { ...p, quantity: newQuantity } : p
+      );
+    });
+  }
+
+  function removeFromCart(product) {
+    setAddedProducts((prevAddedProducts) =>
+      prevAddedProducts.filter((p) => p.name !== product.name)
+    );
+  }
+
+  function calculateTotal() {
+    return addedProducts.reduce(
+      (total, product) => total + product.price * product.quantity,
+      0
+    );
+  }
+
   return (
     <div>
       <h2>Lista Prodotti</h2>
@@ -41,9 +63,20 @@ export default function ProductList() {
         {addedProducts.map((c, i) => (
           <li key={i}>
             {c.name} - {c.price}€ - Pezzi {c.quantity}
+            <button onClick={() => updateProductQuantity(c, c.quantity + 1)}>
+              Aggiungi unità
+            </button>
+            <button onClick={() => updateProductQuantity(c, c.quantity - 1)}>
+              Rimuovi unità
+            </button>
+            <button onClick={() => removeFromCart(c)}>
+              Togli dal carrello
+            </button>
           </li>
         ))}
       </ul>
+
+      <h3>Totale: {calculateTotal().toFixed(2)}€</h3>
     </div>
   );
 }
